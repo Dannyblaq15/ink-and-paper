@@ -31,8 +31,64 @@
 
   <title>ink_and_paper</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    html,
+    body {
+      background: #ffffff;
+    }
+
+    #ink-paper-preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      background: #a24731;
+      transition: opacity 260ms ease, visibility 260ms ease;
+    }
+
+    #ink-paper-preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader-mark {
+      width: min(180px, 42vw);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      animation: preloader-breathe 1300ms ease-in-out infinite;
+    }
+
+    .preloader-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+
+    @keyframes preloader-breathe {
+      0%,
+      100% {
+        opacity: 0.72;
+        transform: scale(0.96);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="ink-paper-preloader" aria-label="Loading Ink & Paper">
+    <div class="preloader-mark">
+      <img src="assets/assets/logo/ink_paper_mark.svg" alt="Ink & Paper">
+    </div>
+  </div>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
@@ -41,6 +97,18 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var preloader = document.getElementById('ink-paper-preloader');
+      if (!preloader) {
+        return;
+      }
+      preloader.classList.add('hidden');
+      window.setTimeout(function () {
+        preloader.remove();
+      }, 320);
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
