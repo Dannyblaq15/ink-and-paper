@@ -1,0 +1,48 @@
+name: ink_and_paper
+description: A local-first Flutter notepad app translated from the Google Stitch design.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  flutter_svg: ^2.2.3
+  google_fonts: ^6.3.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.5
+  uuid: ^4.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+  flutter_lints: ^5.0.0
+  image: ^4.9.1
+  test: ^1.25.8
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo/
+
+flutter_launcher_icons:
+  image_path: assets/logo/ink_paper_icon.png
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/logo/ink_paper_icon.png
+    background_color: "#94442e"
+    theme_color: "#94442e"
+  macos:
+    generate: true
+    image_path: assets/logo/ink_paper_icon.png
+  windows:
+    generate: true
+    image_path: assets/logo/ink_paper_icon.png

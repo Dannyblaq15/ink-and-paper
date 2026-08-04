@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ink &amp; Paper - Note List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+          font-family: 'Material Symbols Outlined';
+          font-weight: normal;
+          font-style: normal;
+          font-size: 24px;
+          line-height: 1;
+          letter-spacing: normal;
+          text-transform: none;
+          display: inline-block;
+          white-space: nowrap;
+          word-wrap: normal;
+          direction: ltr;
+          -webkit-font-feature-settings: 'liga';
+          -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#974730",
+                      "on-surface": "#1f1b16",
+                      "secondary-fixed-dim": "#c8c6c2",
+                      "surface-bright": "#fff8f4",
+                      "on-tertiary-fixed": "#1e1b18",
+                      "primary-fixed-dim": "#ffb5a1",
+                      "surface-variant": "#ebe1d8",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#fffdff",
+                      "surface": "#fff8f4",
+                      "tertiary": "#615b58",
+                      "outline": "#88726d",
+                      "on-secondary-container": "#656461",
+                      "primary-container": "#b35c44",
+                      "primary": "#94442e",
+                      "tertiary-container": "#7a7470",
+                      "on-primary-container": "#fffcff",
+                      "on-error-container": "#93000a",
+                      "on-error": "#ffffff",
+                      "secondary": "#5f5e5b",
+                      "surface-container": "#f6ece3",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#cdc5c0",
+                      "tertiary-fixed": "#e9e1dc",
+                      "secondary-fixed": "#e5e2dd",
+                      "on-secondary": "#ffffff",
+                      "inverse-on-surface": "#f9efe6",
+                      "inverse-surface": "#35302a",
+                      "error": "#ba1a1a",
+                      "on-background": "#1f1b16",
+                      "on-secondary-fixed": "#1c1c19",
+                      "surface-container-highest": "#ebe1d8",
+                      "on-tertiary-fixed-variant": "#4b4642",
+                      "on-primary-fixed": "#3b0900",
+                      "background": "#fff8f4",
+                      "inverse-primary": "#ffb5a1",
+                      "surface-dim": "#e2d8d0",
+                      "secondary-container": "#e5e2dd",
+                      "on-primary-fixed-variant": "#79301b",
+                      "surface-container-high": "#f1e6de",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#fcf2e9",
+                      "on-secondary-fixed-variant": "#474743",
+                      "outline-variant": "#dbc1ba",
+                      "primary-fixed": "#ffdbd1",
+                      "on-surface-variant": "#55433e",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "section-gap": "80px",
+                      "container-margin-desktop": "64px",
+                      "base": "8px",
+                      "container-margin-mobile": "20px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "DM Sans"
+                      ],
+                      "body-md": [
+                              "DM Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "body-lg": [
+                              "DM Sans"
+                      ],
+                      "label-sm": [
+                              "DM Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.03em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen relative pb-32">
+<!-- TopAppBar from JSON -->
+<header class="docked full-width top-0 bg-transparent flex justify-between items-center px-gutter py-4 w-full z-10 sticky">
+<button aria-label="Menu" class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors p-2 rounded-full flex items-center justify-center active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="hidden">
+<!-- Brand Logo Hidden per JSON -->
+</div>
+<div class="rounded-full overflow-hidden w-10 h-10 bg-surface-variant">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A small, circular avatar portrait of a creative professional in a warm, well-lit studio environment. The style is modern editorial, with soft lighting and neutral warm tones fitting the Ink &amp; Paper aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_YgkSeIK59-LM1H_r2SNLNTSOsibzcKwtHeIXvGfsvOhQ1QIggWAR-c_3YhuZ4z-BQt6EJGbsN4-DB3LeJ2Dl5efBukjdWrWUVSzBSGA8yaKtSjyyGDmMK0beO6dH3wwIJadJhekfTI4IkGaMPtrBM6Oe4u_58SVZKHhToRZhDLkhnFF4DnaYAqNstJJW0baD6EH35SGF3jN3mTceaUZ13X35cYYORB62cNvVN3eTHmc4J41c7-s"/>
+</div>
+</header>
+<main class="px-container-margin-mobile md:px-container-margin-desktop max-w-7xl mx-auto">
+<!-- Pinned Section -->
+<section class="mt-8 mb-section-gap">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="push_pin" style="font-variation-settings: 'FILL' 1;">push_pin</span>
+                Pinned
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Pinned Note 1 -->
+<article class="bg-surface-container-lowest rounded-xl p-8 border border-outline/10 hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-primary-container/20 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm">Project Idea</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 days ago</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3 group-hover:text-primary transition-colors">The Solitude of Space</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Exploring the thematic elements of isolation in deep space travel narratives. Need to research long-term psychological effects of sensory deprivation and hyper-sleep cycles.</p>
+</article>
+<!-- Pinned Note 2 -->
+<article class="bg-surface-container-lowest rounded-xl p-8 border border-outline/10 hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-primary-container/20 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm">Journal</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Last week</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3 group-hover:text-primary transition-colors">Autumn Impressions</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">The way the light shifts in October, turning everything golden before it fades to grey. I want to capture that fleeting warmth in the next chapter of the manuscript.</p>
+</article>
+</div>
+</section>
+<!-- Chronological List -->
+<section>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Recent Notes</h2>
+<div class="space-y-4">
+<!-- Note Item 1 -->
+<div class="bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-transform transform active:scale-[0.99] cursor-pointer flex justify-between items-center border border-outline/5">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg mb-1">Character Study: Elias</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm line-clamp-1">Details on Elias's background. He grew up in the coastal town of...</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap ml-4">Yesterday</span>
+</div>
+<!-- Note Item 2 -->
+<div class="bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-transform transform active:scale-[0.99] cursor-pointer flex justify-between items-center border border-outline/5">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg mb-1">Dialogue Snips</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm line-clamp-1">"I never said it was easy, I said it was necessary." - Need to use this...</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap ml-4">Oct 24</span>
+</div>
+<!-- Note Item 3 -->
+<div class="bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-transform transform active:scale-[0.99] cursor-pointer flex justify-between items-center border border-outline/5">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg mb-1">Worldbuilding: The Floating City</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm line-clamp-1">Architecture relies heavily on aerostatic balloons and lightweight...</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap ml-4">Oct 20</span>
+</div>
+<!-- Note Item 4 -->
+<div class="bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-transform transform active:scale-[0.99] cursor-pointer flex justify-between items-center border border-outline/5">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg mb-1">Grocery List</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm line-clamp-1">Almond milk, coffee beans, sourdough bread, avocados...</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap ml-4">Oct 18</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar from JSON -->
+<nav class="fixed bottom-8 left-0 right-0 mx-auto z-50 flex justify-between items-center px-4 py-2 h-16 w-[90%] max-w-md rounded-full border border-outline/10 bg-surface-container-highest/90 backdrop-blur-md shadow-lg">
+<!-- Search Input embedded in the pill as requested in prompt, adapting the BottomNavBar structure -->
+<div class="flex-grow flex items-center bg-surface-variant/50 rounded-full px-4 py-2 mr-2">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none outline-none focus:ring-0 text-on-surface font-body-md w-full placeholder:text-on-surface-variant/50" placeholder="Search notes..." type="text"/>
+</div>
+<!-- Add Button acting as active state from JSON -->
+<button class="flex items-center justify-center bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container rounded-full px-6 py-3 hover:opacity-80 transition-opacity active:scale-[0.98] duration-150 ease-in-out font-label-md text-label-md">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</nav>
+</body></html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Folders View - Ink &amp; Paper</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#974730",
+                        "on-surface": "#1f1b16",
+                        "secondary-fixed-dim": "#c8c6c2",
+                        "surface-bright": "#fff8f4",
+                        "on-tertiary-fixed": "#1e1b18",
+                        "primary-fixed-dim": "#ffb5a1",
+                        "surface-variant": "#ebe1d8",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#fffdff",
+                        "surface": "#fff8f4",
+                        "tertiary": "#615b58",
+                        "outline": "#88726d",
+                        "on-secondary-container": "#656461",
+                        "primary-container": "#b35c44",
+                        "primary": "#94442e",
+                        "tertiary-container": "#7a7470",
+                        "on-primary-container": "#fffcff",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "secondary": "#5f5e5b",
+                        "surface-container": "#f6ece3",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#cdc5c0",
+                        "tertiary-fixed": "#e9e1dc",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f9efe6",
+                        "inverse-surface": "#35302a",
+                        "error": "#ba1a1a",
+                        "on-background": "#1f1b16",
+                        "on-secondary-fixed": "#1c1c19",
+                        "surface-container-highest": "#ebe1d8",
+                        "on-tertiary-fixed-variant": "#4b4642",
+                        "on-primary-fixed": "#3b0900",
+                        "background": "#fff8f4",
+                        "inverse-primary": "#ffb5a1",
+                        "surface-dim": "#e2d8d0",
+                        "secondary-container": "#e5e2dd",
+                        "on-primary-fixed-variant": "#79301b",
+                        "surface-container-high": "#f1e6de",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#fcf2e9",
+                        "on-secondary-fixed-variant": "#474743",
+                        "outline-variant": "#dbc1ba",
+                        "primary-fixed": "#ffdbd1",
+                        "on-surface-variant": "#55433e",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "container-margin-desktop": "64px",
+                        "base": "8px",
+                        "container-margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["DM Sans"],
+                        "label-sm": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface-dim');
+            color: theme('colors.on-surface');
+        }
+        /* Custom scrollbar for an editorial feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline-variant');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative pb-32">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 bg-transparent flat no shadows flex justify-between items-center px-gutter py-4 w-full z-10 hidden md:flex">
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors active:scale-95 duration-200 p-2 rounded-full flex items-center justify-center w-12 h-12">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="flex-1 flex justify-center">
+<!-- No headline as requested -->
+</div>
+<div class="flex items-center">
+<button class="text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors active:scale-95 duration-200 p-2 rounded-full overflow-hidden w-10 h-10 border border-outline/10">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A small, circular profile picture of an author in a warmly lit, minimalist studio setting. The image should be high-contrast, softly focused, and fit perfectly within a premium digital magazine layout, featuring a palette of soft whites, warm greys, and a hint of muted terracotta." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAboUwgZTb4n_viQSxwhyj1xLK72-__cYWQOXspCJZc13pdX11vz5ipWhXZso4qHulnpmRDXqCgmDLnsjPyXpU5ASWq_Nr7CV4ow-sRIzuTuQIdisMud6FPRGRZGhRKLl7gORHytztspdmCKlsVbTX7mi0rb4YRCZO8waAdJwRKizVHMQD15ShXrqcFANzXc58uwE6V647NeMSP1RU4dZTeTDlaqw3HGo3uUWJCAGixgqBUOvacHsI"/>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-margin-mobile md:px-container-margin-desktop pt-8 md:pt-4 max-w-7xl mx-auto w-full">
+<!-- Header Area for Content Canvas -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2">Folders</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Organize your thoughts and projects.</p>
+</div>
+<!-- Contextual Filter/Sort (Editorial Touch) -->
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md text-on-surface-variant">Sort by:</span>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high hover:bg-surface-variant transition-colors border border-outline/10 text-on-surface">
+<span class="font-label-md text-label-md">Recent</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Folders Grid (Bento/Pill approach) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Folder Item 1 -->
+<button class="group bg-surface-container-lowest rounded-xl p-6 border border-outline/10 hover:bg-surface-bright transition-all duration-300 hover:scale-[0.98] text-left flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="relative z-10 flex justify-between items-start w-full">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="folder_open" data-weight="fill" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+</div>
+<span class="font-label-sm text-label-sm px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full">12 Notes</span>
+</div>
+<div class="relative z-10 mt-auto">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Novel Drafts</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Chapter outlines and character sheets.</p>
+</div>
+</button>
+<!-- Folder Item 2 -->
+<button class="group bg-surface-container-lowest rounded-xl p-6 border border-outline/10 hover:bg-surface-bright transition-all duration-300 hover:scale-[0.98] text-left flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="relative z-10 flex justify-between items-start w-full">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="folder" data-weight="fill" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="font-label-sm text-label-sm px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full">45 Notes</span>
+</div>
+<div class="relative z-10 mt-auto">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Daily Journal</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Personal reflections and daily logs.</p>
+</div>
+</button>
+<!-- Folder Item 3 -->
+<button class="group bg-surface-container-lowest rounded-xl p-6 border border-outline/10 hover:bg-surface-bright transition-all duration-300 hover:scale-[0.98] text-left flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="relative z-10 flex justify-between items-start w-full">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="folder" data-weight="fill" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="font-label-sm text-label-sm px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full">8 Notes</span>
+</div>
+<div class="relative z-10 mt-auto">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Poetry</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Fragments and finished pieces.</p>
+</div>
+</button>
+<!-- Folder Item 4 -->
+<button class="group bg-surface-container-lowest rounded-xl p-6 border border-outline/10 hover:bg-surface-bright transition-all duration-300 hover:scale-[0.98] text-left flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="relative z-10 flex justify-between items-start w-full">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="folder" data-weight="fill" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="font-label-sm text-label-sm px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full">102 Notes</span>
+</div>
+<div class="relative z-10 mt-auto">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Research</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Clippings and citations.</p>
+</div>
+</button>
+<!-- Create New Folder Card (Distinctive styling) -->
+<button class="group bg-surface-container rounded-xl p-6 border-2 border-dashed border-outline/30 hover:border-primary/50 hover:bg-surface-variant transition-all duration-300 hover:scale-[0.98] text-left flex flex-col justify-center items-center h-48">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">New Folder</h3>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Combined Search & Action Pill) -->
+<nav class="fixed bottom-8 left-0 right-0 mx-auto z-50 flex justify-between items-center px-4 py-2 h-16 w-[90%] max-w-md rounded-full border border-outline/10 bg-surface-container-highest/90 backdrop-blur-md shadow-lg">
+<!-- Search Input Area -->
+<div class="flex-1 flex items-center h-full pl-2 pr-4 bg-transparent rounded-l-full">
+<span class="material-symbols-outlined text-on-surface-variant mr-3" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 outline-none p-0" placeholder="Search folders..." type="text"/>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-1 pl-4 border-l border-outline/20">
+<!-- Active State (Folders View isn't explicitly in the JSON array, but it's the current context. We'll map 'search' to an inactive state and 'add' to active for the sake of the prompt's focus on creating/searching in this view, though typically an app icon represents the current view.) -->
+<!-- The prompt asks to apply active logic. The JSON only has "search" and "add". Given we are IN a view where we might search or add, let's just render them as interactive buttons. -->
+<button class="flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 hover:opacity-80 transition-opacity active:scale-[0.98] duration-150 ease-in-out h-12 w-12 rounded-full">
+<span class="material-symbols-outlined font-label-md text-label-md" data-icon="search">search</span>
+</button>
+<button class="flex items-center justify-center bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container rounded-full px-6 py-3 hover:opacity-80 transition-opacity active:scale-[0.98] duration-150 ease-in-out h-12">
+<span class="material-symbols-outlined font-label-md text-label-md" data-icon="add">add</span>
+</button>
+</div>
+</nav>
+</body></html>

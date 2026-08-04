@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ink &amp; Paper - Note Editor</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#974730",
+                        "on-surface": "#1f1b16",
+                        "secondary-fixed-dim": "#c8c6c2",
+                        "surface-bright": "#fff8f4",
+                        "on-tertiary-fixed": "#1e1b18",
+                        "primary-fixed-dim": "#ffb5a1",
+                        "surface-variant": "#ebe1d8",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#fffdff",
+                        "surface": "#fff8f4",
+                        "tertiary": "#615b58",
+                        "outline": "#88726d",
+                        "on-secondary-container": "#656461",
+                        "primary-container": "#b35c44",
+                        "primary": "#94442e",
+                        "tertiary-container": "#7a7470",
+                        "on-primary-container": "#fffcff",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "secondary": "#5f5e5b",
+                        "surface-container": "#f6ece3",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#cdc5c0",
+                        "tertiary-fixed": "#e9e1dc",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f9efe6",
+                        "inverse-surface": "#35302a",
+                        "error": "#ba1a1a",
+                        "on-background": "#1f1b16",
+                        "on-secondary-fixed": "#1c1c19",
+                        "surface-container-highest": "#ebe1d8",
+                        "on-tertiary-fixed-variant": "#4b4642",
+                        "on-primary-fixed": "#3b0900",
+                        "background": "#fff8f4",
+                        "inverse-primary": "#ffb5a1",
+                        "surface-dim": "#e2d8d0",
+                        "secondary-container": "#e5e2dd",
+                        "on-primary-fixed-variant": "#79301b",
+                        "surface-container-high": "#f1e6de",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#fcf2e9",
+                        "on-secondary-fixed-variant": "#474743",
+                        "outline-variant": "#dbc1ba",
+                        "primary-fixed": "#ffdbd1",
+                        "on-surface-variant": "#55433e",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "container-margin-desktop": "64px",
+                        "base": "8px",
+                        "container-margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["DM Sans"],
+                        "label-sm": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Minimalist scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: var(--tw-colors-surface-variant); border-radius: 9999px; }
+        
+        /* Editor specific styles to mimic a clean paper feel */
+        .editor-content:empty:before {
+            content: attr(data-placeholder);
+            color: var(--tw-colors-on-surface-variant);
+            opacity: 0.6;
+            pointer-events: none;
+            display: block; /* For Firefox */
+        }
+        .editor-content:focus { outline: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background h-full font-body-md overflow-hidden flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar Semantic Shell -->
+<header class="docked full-width top-0 bg-transparent flex justify-between items-center px-gutter py-4 w-full z-10 transition-transform duration-200">
+<button aria-label="Menu" class="w-12 h-12 flex items-center justify-center rounded-full text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<!-- Subtle Saved Indicator -->
+<div class="flex items-center gap-2 text-on-surface-variant dark:text-on-secondary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">cloud_done</span>
+<span class="font-label-sm text-label-sm">Saved</span>
+</div>
+<button aria-label="User Profile" class="w-12 h-12 rounded-full overflow-hidden border border-outline/10 text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors active:scale-95">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A minimal, stylized avatar illustration of a user profile in muted warm tones, perfectly centered in a circle. The style is flat, editorial, and sophisticated, avoiding any cluttered details. Soft lighting highlights the subtle color shifts against a clean, off-white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaqfWcPL5guPt0kQDCmyZPCkhYFrZZVHBuCtW8HNfVUIIAUxe6vSMpa1RWYusQI7NDOuzBXz9CjwgBlvctoIChSv8KZRq6wG669JhKPYm20oLog5FIGKqbgH7rfbqDB5afHTq-Qe5-qRnYHWsxCot5EG_ZfmQCuRCoHwYgeDfsTUG_B4QfMjxBolJ8QaQ8EELh9xgtcZQji-bPZZnkUyLIOLZljrh3oLl1KT5drlWDHMYzYQc-NRQ"/>
+</button>
+</header>
+<!-- Main Canvas: The Paper -->
+<main class="flex-grow flex justify-center w-full px-container-margin-mobile md:px-container-margin-desktop overflow-y-auto pb-32 pt-8">
+<article class="w-full max-w-3xl bg-surface-container-lowest rounded-xl shadow-sm border border-outline/5 p-8 md:p-16 flex flex-col gap-6 relative min-h-[70vh]">
+<!-- Document Title / Header 1 -->
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface focus:outline-none placeholder-on-surface-variant/50" contenteditable="true" data-placeholder="Untitled Note">The Architecture of Stillness</h1>
+<!-- Editor Body -->
+<div class="editor-content font-body-lg text-body-lg text-on-surface leading-relaxed flex-grow whitespace-pre-wrap" contenteditable="true" data-placeholder="Start writing...">In the modern pursuit of constant motion, we often overlook the profound impact of intentional pauses. Stillness is not merely the absence of movement; it is an active architecture of the mind, creating space where clarity can construct new perspectives.
+
+When we observe the built environment, the voids—the courtyards, the gaps between columns, the empty spaces within a room—are what define the structure itself. Similarly, our thoughts require empty space to take form and meaning.
+
+Consider the physical sensation of dropping a stone into a perfectly still pond. The ripples are only visible, only impactful, because of the calmness they disrupt. In a turbulent sea, the stone's entry is lost entirely.
+
+This editor is designed with that stillness in mind. A blank canvas, stripped of immediate distraction, offering a quiet room for your thoughts to build outward.</div>
+</article>
+</main>
+<!-- Floating Bottom Toolbar (replaces BottomNavBar for task focus) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 p-2 bg-surface-container-highest/90 backdrop-blur-md border border-outline/10 shadow-lg rounded-full w-max max-w-[90%] overflow-x-auto no-scrollbar">
+<!-- Text Formatting Group -->
+<div class="flex items-center gap-1 bg-surface rounded-full p-1 border border-outline/5">
+<button aria-label="Bold" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">format_bold</span>
+</button>
+<button aria-label="Italic" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">format_italic</span>
+</button>
+<button aria-label="Underline" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">format_underlined</span>
+</button>
+</div>
+<div class="w-px h-6 bg-outline/20 mx-1 shrink-0"></div>
+<!-- Structure Group -->
+<div class="flex items-center gap-1 bg-surface rounded-full p-1 border border-outline/5">
+<button aria-label="Heading" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">title</span>
+</button>
+<button aria-label="List" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">format_list_bulleted</span>
+</button>
+<button aria-label="Quote" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">format_quote</span>
+</button>
+</div>
+<div class="w-px h-6 bg-outline/20 mx-1 shrink-0"></div>
+<!-- Action Group -->
+<button class="h-12 px-6 flex items-center justify-center rounded-full bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm active:scale-95 gap-2 shrink-0">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 0;">check</span>
+            Done
+        </button>
+</div>
+<script>
+        // Simple script to handle auto-resizing of text area if needed, though contenteditable handles most of it inherently here.
+        // Adding a small interaction script for the "saved" indicator to simulate auto-save
+        
+        const editor = document.querySelector('.editor-content');
+        const title = document.querySelector('h1[contenteditable]');
+        const savedIndicator = document.querySelector('.opacity-70 span.font-label-sm');
+        const savedIcon = document.querySelector('.opacity-70 span.material-symbols-outlined');
+        
+        let typingTimer;
+        const doneTypingInterval = 1500; // 1.5 seconds
+
+        function simulateSave() {
+            savedIndicator.textContent = 'Saving...';
+            savedIcon.textContent = 'sync';
+            savedIcon.classList.add('animate-spin');
+            
+            setTimeout(() => {
+                savedIndicator.textContent = 'Saved';
+                savedIcon.textContent = 'cloud_done';
+                savedIcon.classList.remove('animate-spin');
+            }, 800);
+        }
+
+        [editor, title].forEach(el => {
+            el.addEventListener('input', () => {
+                clearTimeout(typingTimer);
+                savedIndicator.textContent = 'Unsaved changes';
+                savedIcon.textContent = 'cloud_off';
+                typingTimer = setTimeout(simulateSave, doneTypingInterval);
+            });
+        });
+    </script>
+</body></html>
