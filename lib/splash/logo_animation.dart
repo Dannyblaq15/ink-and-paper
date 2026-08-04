@@ -18,7 +18,10 @@ class LogoAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.sizeOf(context);
-    final logoWidth = screen.shortestSide.clamp(280.0, 430.0);
+    final isMobile = screen.shortestSide < 600;
+    final logoWidth = isMobile
+        ? screen.shortestSide.clamp(220.0, 330.0)
+        : screen.shortestSide.clamp(280.0, 430.0);
     final markHeight = logoWidth * 0.78;
     final textHeight = logoWidth * 0.18;
 
