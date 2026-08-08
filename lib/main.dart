@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'providers/note_providers.dart';
 import 'screens/note_list_screen.dart';
+import 'splash/splash_screen.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -28,7 +30,9 @@ class InkAndPaperApp extends ConsumerWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
-      home: const NoteListScreen(),
+      home: kIsWeb
+          ? const NoteListScreen()
+          : const SplashScreen(home: NoteListScreen()),
     );
   }
 }
