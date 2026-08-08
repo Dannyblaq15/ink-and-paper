@@ -11,6 +11,7 @@ class NoteBlock {
     this.bold = false,
     this.italic = false,
     this.underline = false,
+    this.runs = const [],
   });
 
   final NoteBlockType type;
@@ -18,6 +19,7 @@ class NoteBlock {
   final bool bold;
   final bool italic;
   final bool underline;
+  final List<NoteTextRun> runs;
 
   Map<String, dynamic> toJson() {
     return {
@@ -26,13 +28,88 @@ class NoteBlock {
       'bold': bold,
       'italic': italic,
       'underline': underline,
+      'runs': runs.map((run) => run.toJson()).toList(),
     };
   }
 
   factory NoteBlock.fromJson(Map<String, dynamic> json) {
+    final text = json['text'] as String;
+    final runs = (json['runs'] as List<dynamic>? ?? const [])
+        .map((run) =>
+            NoteTextRun.fromJson(Map<String, dynamic>.from(run as Map)))
+        .where((run) => run.start < run.end && run.start < text.length)
+        .map((run) => run.clampToText(text))
+        .toList();
+    final legacyBold = json['bold'] as bool? ?? false;
+    final legacyItalic = json['italic'] as bool? ?? false;
+    final legacyUnderline = json['underline'] as bool? ?? false;
+
     return NoteBlock(
       type: NoteBlockType.values.byName(json['type'] as String),
-      text: json['text'] as String,
+      text: text,
+      bold: legacyBold,
+      italic: legacyItalic,
+      underline: legacyUnderline,
+      runs: runs.isNotEmpty
+          ? runs
+          : [
+              if (text.isNotEmpty &&
+                  (legacyBold || legacyItalic || legacyUnderline))
+                NoteTextRun(
+                  start: 0,
+                  end: text.length,
+                  bold: legacyBold,
+                  italic: legacyItalic,
+                  underline: legacyUnderline,
+                ),
+            ],
+    );
+  }
+}
+
+class NoteTextRun {
+  const NoteTextRun({
+    required this.start,
+    required this.end,
+    this.bold = false,
+    this.italic = false,
+    this.underline = false,
+  });
+
+  final int start;
+  final int end;
+  final bool bold;
+  final bool italic;
+  final bool underline;
+
+  bool get hasStyle => bold || italic || underline;
+
+  NoteTextRun clampToText(String text) {
+    final safeStart = start.clamp(0, text.length);
+    final safeEnd = end.clamp(safeStart, text.length);
+    return NoteTextRun(
+      start: safeStart,
+      end: safeEnd,
+      bold: bold,
+      italic: italic,
+      underline: underline,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'start': start,
+      'end': end,
+      'bold': bold,
+      'italic': italic,
+      'underline': underline,
+    };
+  }
+
+  factory NoteTextRun.fromJson(Map<String, dynamic> json) {
+    return NoteTextRun(
+      start: json['start'] as int,
+      end: json['end'] as int,
       bold: json['bold'] as bool? ?? false,
       italic: json['italic'] as bool? ?? false,
       underline: json['underline'] as bool? ?? false,

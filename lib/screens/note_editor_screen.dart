@@ -166,17 +166,17 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   }
 
   void _toggleBold() {
-    setState(() => _activeBlock.bold = !_activeBlock.bold);
+    setState(() => _activeBlock.controller.toggleBold());
     _queueSave();
   }
 
   void _toggleItalic() {
-    setState(() => _activeBlock.italic = !_activeBlock.italic);
+    setState(() => _activeBlock.controller.toggleItalic());
     _queueSave();
   }
 
   void _toggleUnderline() {
-    setState(() => _activeBlock.underline = !_activeBlock.underline);
+    setState(() => _activeBlock.controller.toggleUnderline());
     _queueSave();
   }
 
@@ -375,20 +375,16 @@ class _EditableBlock {
   _EditableBlock({
     required this.type,
     required String text,
-    required this.bold,
-    required this.italic,
-    required this.underline,
+    required List<NoteTextRun> runs,
   })  : id = const Uuid().v4(),
-        controller = TextEditingController(text: text),
+        controller = _StyledTextController(text: text, runs: runs),
         focusNode = FocusNode();
 
   factory _EditableBlock.empty() {
     return _EditableBlock(
       type: NoteBlockType.paragraph,
       text: '',
-      bold: false,
-      italic: false,
-      underline: false,
+      runs: const [],
     );
   }
 
@@ -396,27 +392,20 @@ class _EditableBlock {
     return _EditableBlock(
       type: block.type,
       text: block.text,
-      bold: block.bold,
-      italic: block.italic,
-      underline: block.underline,
+      runs: block.runs,
     );
   }
 
   final String id;
   NoteBlockType type;
-  bool bold;
-  bool italic;
-  bool underline;
-  final TextEditingController controller;
+  final _StyledTextController controller;
   final FocusNode focusNode;
 
   NoteBlock toNoteBlock() {
     return NoteBlock(
       type: type,
       text: controller.text.trim(),
-      bold: bold,
-      italic: italic,
-      underline: underline,
+      runs: controller.runsForSavedText(),
     );
   }
 
@@ -434,7 +423,319 @@ extension on NoteBlock {
       bold: bold,
       italic: italic,
       underline: underline,
+      runs: runs,
     );
+  }
+}
+
+class _TextRunStyle {
+  const _TextRunStyle({
+    this.bold = false,
+    this.italic = false,
+    this.underline = false,
+  });
+
+  final bool bold;
+  final bool italic;
+  final bool underline;
+
+  bool get hasStyle => bold || italic || underline;
+
+  _TextRunStyle copyWith({
+    bool? bold,
+    bool? italic,
+    bool? underline,
+  }) {
+    return _TextRunStyle(
+      bold: bold ?? this.bold,
+      italic: italic ?? this.italic,
+      underline: underline ?? this.underline,
+    );
+  }
+}
+
+class _StyledTextController extends TextEditingController {
+  _StyledTextController({
+    required String text,
+    required List<NoteTextRun> runs,
+  })  : _runs = runs.map(_StyledRange.fromNoteRun).toList(),
+        super(text: text);
+
+  List<_StyledRange> _runs;
+  _TextRunStyle _typingStyle = const _TextRunStyle();
+  TextEditingValue _previousValue = TextEditingValue.empty;
+
+  void toggleBold() {
+    _toggleStyle((style) => style.copyWith(bold: !style.bold));
+  }
+
+  void toggleItalic() {
+    _toggleStyle((style) => style.copyWith(italic: !style.italic));
+  }
+
+  void toggleUnderline() {
+    _toggleStyle((style) => style.copyWith(underline: !style.underline));
+  }
+
+  void _toggleStyle(_TextRunStyle Function(_TextRunStyle style) update) {
+    final selection = value.selection;
+    if (!selection.isValid || selection.isCollapsed) {
+      _typingStyle = update(_typingStyle);
+      return;
+    }
+
+    final start =
+        selection.start < selection.end ? selection.start : selection.end;
+    final end =
+        selection.start < selection.end ? selection.end : selection.start;
+    _applyStyleToRange(start, end, update);
+  }
+
+  List<NoteTextRun> runsForSavedText() {
+    final leadingTrim = text.length - text.trimLeft().length;
+    final savedText = text.trim();
+    if (savedText.isEmpty) {
+      return const [];
+    }
+    return _normalizedRuns(text)
+        .map(
+          (run) => NoteTextRun(
+            start: (run.start - leadingTrim).clamp(0, savedText.length),
+            end: (run.end - leadingTrim).clamp(0, savedText.length),
+            bold: run.style.bold,
+            italic: run.style.italic,
+            underline: run.style.underline,
+          ),
+        )
+        .where((run) => run.start < run.end && run.hasStyle)
+        .toList();
+  }
+
+  @override
+  set value(TextEditingValue newValue) {
+    final oldValue = _previousValue;
+    super.value = newValue;
+    _syncRunsAfterEdit(oldValue, newValue);
+    _previousValue = newValue;
+  }
+
+  void _syncRunsAfterEdit(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final delta = newValue.text.length - oldValue.text.length;
+    if (delta == 0) {
+      return;
+    }
+
+    final editStart = oldValue.selection.isValid
+        ? oldValue.selection.start.clamp(0, oldValue.text.length)
+        : 0;
+
+    if (delta > 0) {
+      final insertedStart = editStart;
+      final insertedEnd = insertedStart + delta;
+      _runs = _runs.map((run) {
+        if (run.start >= insertedStart) {
+          return run.shift(delta);
+        }
+        if (run.end > insertedStart) {
+          return run.copyWith(end: run.end + delta);
+        }
+        return run;
+      }).toList();
+      if (_typingStyle.hasStyle) {
+        _runs.add(_StyledRange(
+          start: insertedStart,
+          end: insertedEnd,
+          style: _typingStyle,
+        ));
+      }
+    } else {
+      final deletedLength = -delta;
+      final deletedStart = newValue.selection.isValid
+          ? newValue.selection.start.clamp(0, newValue.text.length)
+          : editStart.clamp(0, newValue.text.length);
+      final deletedEnd = deletedStart + deletedLength;
+      _runs = _runs
+          .map((run) => run.afterDeletion(deletedStart, deletedEnd))
+          .whereType<_StyledRange>()
+          .toList();
+    }
+
+    _runs = _normalizedRuns(newValue.text);
+  }
+
+  void _applyStyleToRange(
+    int start,
+    int end,
+    _TextRunStyle Function(_TextRunStyle style) update,
+  ) {
+    final segments = <_StyledRange>[];
+    var cursor = start;
+    for (final run in _normalizedRuns(text)) {
+      if (run.end <= start || run.start >= end) {
+        segments.add(run);
+        continue;
+      }
+      if (run.start < start) {
+        segments.add(run.copyWith(end: start));
+      }
+      if (cursor < run.start) {
+        final nextStyle = update(const _TextRunStyle());
+        if (nextStyle.hasStyle) {
+          segments.add(
+              _StyledRange(start: cursor, end: run.start, style: nextStyle));
+        }
+      }
+      final overlapStart = run.start.clamp(start, end);
+      final overlapEnd = run.end.clamp(start, end);
+      final nextStyle = update(run.style);
+      if (nextStyle.hasStyle) {
+        segments.add(_StyledRange(
+            start: overlapStart, end: overlapEnd, style: nextStyle));
+      }
+      cursor = overlapEnd;
+      if (run.end > end) {
+        segments.add(run.copyWith(start: end));
+      }
+    }
+    if (cursor < end) {
+      final nextStyle = update(const _TextRunStyle());
+      if (nextStyle.hasStyle) {
+        segments.add(_StyledRange(start: cursor, end: end, style: nextStyle));
+      }
+    }
+    _runs = _mergeAdjacent(segments, text);
+  }
+
+  List<_StyledRange> _normalizedRuns(String value) {
+    return _mergeAdjacent(
+      _runs
+          .where((run) => run.start < run.end && run.start < value.length)
+          .map((run) => run.clampToText(value))
+          .where((run) => run.style.hasStyle)
+          .toList(),
+      value,
+    );
+  }
+
+  List<_StyledRange> _mergeAdjacent(List<_StyledRange> ranges, String value) {
+    ranges.sort((a, b) => a.start.compareTo(b.start));
+    final merged = <_StyledRange>[];
+    for (final range in ranges) {
+      final safe = range.clampToText(value);
+      if (safe.start >= safe.end || !safe.style.hasStyle) {
+        continue;
+      }
+      if (merged.isNotEmpty &&
+          merged.last.end == safe.start &&
+          merged.last.sameStyle(safe)) {
+        merged[merged.length - 1] = merged.last.copyWith(end: safe.end);
+      } else {
+        merged.add(safe);
+      }
+    }
+    return merged;
+  }
+
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    final defaultStyle = style ?? DefaultTextStyle.of(context).style;
+    final children = <TextSpan>[];
+    var cursor = 0;
+    for (final run in _normalizedRuns(text)) {
+      if (cursor < run.start) {
+        children.add(TextSpan(text: text.substring(cursor, run.start)));
+      }
+      children.add(
+        TextSpan(
+          text: text.substring(run.start, run.end),
+          style: defaultStyle.copyWith(
+            fontWeight: run.style.bold ? FontWeight.w700 : FontWeight.w400,
+            fontStyle: run.style.italic ? FontStyle.italic : FontStyle.normal,
+            decoration: run.style.underline
+                ? TextDecoration.underline
+                : TextDecoration.none,
+          ),
+        ),
+      );
+      cursor = run.end;
+    }
+    if (cursor < text.length) {
+      children.add(TextSpan(text: text.substring(cursor)));
+    }
+    return TextSpan(style: defaultStyle, children: children);
+  }
+}
+
+class _StyledRange {
+  const _StyledRange({
+    required this.start,
+    required this.end,
+    required this.style,
+  });
+
+  factory _StyledRange.fromNoteRun(NoteTextRun run) {
+    return _StyledRange(
+      start: run.start,
+      end: run.end,
+      style: _TextRunStyle(
+        bold: run.bold,
+        italic: run.italic,
+        underline: run.underline,
+      ),
+    );
+  }
+
+  final int start;
+  final int end;
+  final _TextRunStyle style;
+
+  _StyledRange copyWith({
+    int? start,
+    int? end,
+    _TextRunStyle? style,
+  }) {
+    return _StyledRange(
+      start: start ?? this.start,
+      end: end ?? this.end,
+      style: style ?? this.style,
+    );
+  }
+
+  _StyledRange shift(int offset) {
+    return copyWith(start: start + offset, end: end + offset);
+  }
+
+  _StyledRange clampToText(String text) {
+    final safeStart = start.clamp(0, text.length);
+    final safeEnd = end.clamp(safeStart, text.length);
+    return copyWith(start: safeStart, end: safeEnd);
+  }
+
+  _StyledRange? afterDeletion(int deletedStart, int deletedEnd) {
+    final deletedLength = deletedEnd - deletedStart;
+    if (end <= deletedStart) {
+      return this;
+    }
+    if (start >= deletedEnd) {
+      return shift(-deletedLength);
+    }
+    final nextStart = start < deletedStart ? start : deletedStart;
+    final nextEnd = end > deletedEnd ? end - deletedLength : deletedStart;
+    if (nextStart >= nextEnd) {
+      return null;
+    }
+    return copyWith(start: nextStart, end: nextEnd);
+  }
+
+  bool sameStyle(_StyledRange other) {
+    return style.bold == other.style.bold &&
+        style.italic == other.style.italic &&
+        style.underline == other.style.underline;
   }
 }
 
@@ -550,12 +851,7 @@ class _BlockField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: block.bold ? FontWeight.w700 : FontWeight.w400,
-          fontStyle: block.italic ? FontStyle.italic : FontStyle.normal,
-          decoration:
-              block.underline ? TextDecoration.underline : TextDecoration.none,
-        );
+    final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final field = TextField(
       controller: block.controller,
       focusNode: block.focusNode,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/sample_notes.dart';
 import '../models/note.dart';
 import '../providers/note_providers.dart';
 import 'note_editor_screen.dart';
@@ -21,52 +20,12 @@ class _NoteListScreenState extends ConsumerState<NoteListScreen> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    Future.microtask(_seedNotesIfNeeded);
-    Future.microtask(_removeDummySeedCategories);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  Future<void> _seedNotesIfNeeded() async {
-    final repository = ref.read(noteRepositoryProvider);
-    final notes = await repository.getAll();
-    if (notes.isNotEmpty) {
-      return;
-    }
-
-    for (final note in sampleNotes) {
-      await repository.save(note);
-    }
-    ref.invalidate(allNotesProvider);
-    ref.invalidate(notesProvider);
-  }
-
-  Future<void> _removeDummySeedCategories() async {
-    const seededNoteIds = {
-      'project-space',
-      'journal-autumn',
-      'character-elias',
-      'dialogue-snips',
-      'floating-city',
-      'grocery-list',
-    };
-    final repository = ref.read(noteRepositoryProvider);
-    final notes = await repository.getAll();
-    var changed = false;
-    for (final note in notes) {
-      if (seededNoteIds.contains(note.id) && note.tags.isNotEmpty) {
-        await repository.save(note.copyWith(tags: const []));
-        changed = true;
-      }
-    }
-    if (changed) {
-      ref.invalidate(allNotesProvider);
-      ref.invalidate(notesProvider);
-    }
   }
 
   @override
