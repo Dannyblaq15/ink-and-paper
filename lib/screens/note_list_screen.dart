@@ -20,12 +20,30 @@ class _NoteListScreenState extends ConsumerState<NoteListScreen> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    Future.microtask(_removeSeededDummyNotes);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _removeSeededDummyNotes() async {
+    const seededNoteIds = {
+      'project-space',
+      'journal-autumn',
+      'character-elias',
+      'dialogue-snips',
+      'floating-city',
+      'grocery-list',
+    };
+    final repository = ref.read(noteRepositoryProvider);
+    for (final id in seededNoteIds) {
+      await repository.delete(id);
+    }
+    ref.invalidate(allNotesProvider);
+    ref.invalidate(notesProvider);
   }
 
   @override

@@ -162,7 +162,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   }
 
   void _setActiveBlock(int index) {
-    _activeBlockIndex = index;
+    setState(() => _activeBlockIndex = index);
   }
 
   void _toggleBold() {
@@ -364,6 +364,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
             onList: () => _setBlockType(NoteBlockType.bulletedList),
             onQuote: () => _setBlockType(NoteBlockType.blockquote),
             onDone: _done,
+            boldSelected: _activeBlock.controller.activeStyle.bold,
+            italicSelected: _activeBlock.controller.activeStyle.italic,
+            underlineSelected: _activeBlock.controller.activeStyle.underline,
+            paragraphSelected: _activeBlock.type == NoteBlockType.paragraph,
+            listSelected: _activeBlock.type == NoteBlockType.bulletedList,
+            quoteSelected: _activeBlock.type == NoteBlockType.blockquote,
           ),
         ],
       ),
@@ -475,6 +481,30 @@ class _StyledTextController extends TextEditingController {
 
   void toggleUnderline() {
     _toggleStyle((style) => style.copyWith(underline: !style.underline));
+  }
+
+  _TextRunStyle get activeStyle {
+    final selection = value.selection;
+    if (!selection.isValid || selection.isCollapsed) {
+      return _typingStyle;
+    }
+
+    final start =
+        selection.start < selection.end ? selection.start : selection.end;
+    final end =
+        selection.start < selection.end ? selection.end : selection.start;
+    var bold = false;
+    var italic = false;
+    var underline = false;
+    for (final run in _normalizedRuns(text)) {
+      if (run.end <= start || run.start >= end) {
+        continue;
+      }
+      bold = bold || run.style.bold;
+      italic = italic || run.style.italic;
+      underline = underline || run.style.underline;
+    }
+    return _TextRunStyle(bold: bold, italic: italic, underline: underline);
   }
 
   void _toggleStyle(_TextRunStyle Function(_TextRunStyle style) update) {
@@ -792,40 +822,54 @@ class _CategoryEditor extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: controller,
-                    textAlign: TextAlign.center,
-                    textAlignVertical: TextAlignVertical.center,
-                    onSubmitted: (_) => onAdd(),
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Add category',
-                      hintStyle:
-                          Theme.of(context).textTheme.labelMedium?.copyWith(
-                                color: AppTheme.textSecondary(context)
-                                    .withValues(alpha: 0.7),
-                                letterSpacing: 0,
-                              ),
-                    ),
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: AppTheme.textPrimary(context),
-                          letterSpacing: 0,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      TextField(
+                        controller: controller,
+                        textAlign: TextAlign.center,
+                        textAlignVertical: TextAlignVertical.center,
+                        onSubmitted: (_) => onAdd(),
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 36,
+                            vertical: 0,
+                          ),
+                          hintText: 'Add category',
+                          hintStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: AppTheme.textSecondary(context)
+                                        .withValues(alpha: 0.7),
+                                    letterSpacing: 0,
+                                  ),
                         ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.add),
-                  color: AppTheme.primary,
-                  iconSize: compact ? 16 : 18,
-                  style: IconButton.styleFrom(
-                    fixedSize: Size(compact ? 28 : 32, compact ? 28 : 32),
-                    minimumSize: Size(compact ? 28 : 32, compact ? 28 : 32),
-                    padding: EdgeInsets.zero,
-                    shape: const CircleBorder(),
+                        style:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  color: AppTheme.textPrimary(context),
+                                  letterSpacing: 0,
+                                ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        child: IconButton(
+                          onPressed: onAdd,
+                          icon: const Icon(Icons.add),
+                          color: AppTheme.primary,
+                          iconSize: compact ? 16 : 18,
+                          style: IconButton.styleFrom(
+                            fixedSize:
+                                Size(compact ? 28 : 32, compact ? 28 : 32),
+                            minimumSize:
+                                Size(compact ? 28 : 32, compact ? 28 : 32),
+                            padding: EdgeInsets.zero,
+                            shape: const CircleBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -907,6 +951,12 @@ class _FloatingToolbar extends StatelessWidget {
     required this.onList,
     required this.onQuote,
     required this.onDone,
+    required this.boldSelected,
+    required this.italicSelected,
+    required this.underlineSelected,
+    required this.paragraphSelected,
+    required this.listSelected,
+    required this.quoteSelected,
   });
 
   final VoidCallback onBold;
@@ -916,6 +966,12 @@ class _FloatingToolbar extends StatelessWidget {
   final VoidCallback onList;
   final VoidCallback onQuote;
   final VoidCallback onDone;
+  final bool boldSelected;
+  final bool italicSelected;
+  final bool underlineSelected;
+  final bool paragraphSelected;
+  final bool listSelected;
+  final bool quoteSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -948,28 +1004,40 @@ class _FloatingToolbar extends StatelessWidget {
               children: [
                 _ToolbarGroup(
                   actions: [
-                    _ToolbarAction(icon: Icons.format_bold, onPressed: onBold),
+                    _ToolbarAction(
+                      icon: Icons.format_bold,
+                      onPressed: onBold,
+                      selected: boldSelected,
+                    ),
                     _ToolbarAction(
                       icon: Icons.format_italic,
                       onPressed: onItalic,
+                      selected: italicSelected,
                     ),
                     _ToolbarAction(
                       icon: Icons.format_underlined,
                       onPressed: onUnderline,
+                      selected: underlineSelected,
                     ),
                   ],
                 ),
                 const _ToolbarDivider(),
                 _ToolbarGroup(
                   actions: [
-                    _ToolbarAction(icon: Icons.title, onPressed: onParagraph),
+                    _ToolbarAction(
+                      icon: Icons.title,
+                      onPressed: onParagraph,
+                      selected: paragraphSelected,
+                    ),
                     _ToolbarAction(
                       icon: Icons.format_list_bulleted,
                       onPressed: onList,
+                      selected: listSelected,
                     ),
                     _ToolbarAction(
                       icon: Icons.format_quote,
                       onPressed: onQuote,
+                      selected: quoteSelected,
                     ),
                   ],
                 ),
@@ -1004,10 +1072,12 @@ class _ToolbarAction {
   const _ToolbarAction({
     required this.icon,
     required this.onPressed,
+    this.selected = false,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
+  final bool selected;
 }
 
 class _ToolbarGroup extends StatelessWidget {
@@ -1030,9 +1100,13 @@ class _ToolbarGroup extends StatelessWidget {
               (action) => IconButton(
                 onPressed: action.onPressed,
                 icon: Icon(action.icon),
-                color: AppTheme.textSecondary(context),
+                color: action.selected
+                    ? AppTheme.onPrimary
+                    : AppTheme.textSecondary(context),
                 style: IconButton.styleFrom(
                   fixedSize: const Size(40, 40),
+                  backgroundColor:
+                      action.selected ? AppTheme.primary : Colors.transparent,
                   shape: const CircleBorder(),
                 ),
               ),
