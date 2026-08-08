@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -29,7 +30,9 @@ class InkAndPaperApp extends ConsumerWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
-      home: const SplashScreen(home: NoteListScreen()),
+      home: kIsWeb
+          ? const NoteListScreen()
+          : const SplashScreen(home: NoteListScreen()),
     );
   }
 }
