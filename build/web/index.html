@@ -71,14 +71,40 @@
       aspect-ratio: 1;
       display: grid;
       place-items: center;
-      animation: preloader-reveal 2200ms ease-in-out infinite;
     }
 
-    .preloader-mark img {
+    .preloader-mark svg {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      transform-origin: center;
+      overflow: visible;
+    }
+
+    .preloader-line {
+      fill: none;
+      stroke: #111111;
+      stroke-width: 48;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1800;
+      stroke-dashoffset: 1800;
+      animation: preloader-draw 2600ms ease-in-out infinite;
+    }
+
+    .preloader-line.corner {
+      animation-delay: 180ms;
+    }
+
+    .preloader-line.nib {
+      animation-delay: 360ms;
+    }
+
+    .preloader-dot {
+      fill: #a24731;
+      opacity: 0;
+      stroke: #111111;
+      stroke-width: 48;
+      animation: preloader-dot 2600ms ease-in-out infinite;
+      animation-delay: 620ms;
     }
 
     .preloader-message {
@@ -91,25 +117,38 @@
       animation: preloader-message 2200ms ease-in-out infinite;
     }
 
-    @keyframes preloader-reveal {
-      0% {
-        opacity: 0;
-        filter: blur(7px);
+    @keyframes preloader-draw {
+      0%,
+      8% {
+        opacity: 1;
+        stroke-dashoffset: 1800;
       }
 
-      30% {
+      48%,
+      72% {
         opacity: 1;
-        filter: blur(0);
-      }
-
-      68% {
-        opacity: 1;
-        filter: blur(0);
+        stroke-dashoffset: 0;
       }
 
       100% {
         opacity: 0;
-        filter: blur(7px);
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes preloader-dot {
+      0%,
+      28% {
+        opacity: 0;
+      }
+
+      44%,
+      72% {
+        opacity: 1;
+      }
+ 
+      100% {
+        opacity: 0;
       }
     }
 
@@ -130,7 +169,17 @@
   <div id="ink-paper-preloader" aria-label="Loading Ink & Paper">
     <div class="preloader-shell">
       <div class="preloader-mark">
-        <img src="assets/assets/logo/ink_paper_mark.svg" alt="Ink & Paper">
+        <svg viewBox="0 0 1024 1024" role="img" aria-label="Ink & Paper logo">
+          <g transform="translate(188 92)">
+            <path class="preloader-line paper" d="M112 40h340l188 188v452c0 92-76 168-168 168H112C68 848 32 812 32 768V120c0-44 36-80 80-80z"/>
+            <path class="preloader-line corner" d="M452 40v176c0 24 20 44 44 44h144"/>
+            <path class="preloader-line nib" d="M116 670l80-244 244-80-80 244-244 80z"/>
+            <path class="preloader-line nib" d="M196 426l164 164"/>
+            <path class="preloader-line nib" d="M440 346L260 526"/>
+            <circle class="preloader-dot" cx="270" cy="516" r="28"/>
+            <path class="preloader-line nib" d="M116 670l-44 44 76 76 48-120"/>
+          </g>
+        </svg>
       </div>
       <p class="preloader-message">Preparing your notes...</p>
     </div>
