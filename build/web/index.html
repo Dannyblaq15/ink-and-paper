@@ -60,18 +60,46 @@
       width: min(320px, calc(100vw - 48px));
       display: grid;
       justify-items: center;
-      gap: 18px;
+      gap: 20px;
       text-align: center;
     }
 
+    .preloader-icon-stage {
+      position: relative;
+      width: min(178px, 44vw);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .preloader-icon-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-top-color: rgba(255, 255, 255, 0.86);
+      animation: preloader-spin 1800ms linear infinite;
+    }
+
+    .preloader-icon-stage::after {
+      content: '';
+      position: absolute;
+      inset: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.2);
+    }
+
     .preloader-mark {
-      width: min(132px, 32vw);
+      position: relative;
+      z-index: 1;
+      width: min(124px, 30vw);
       aspect-ratio: 1;
       display: grid;
       place-items: center;
       border-radius: 30px;
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.18);
+      background: rgba(255, 255, 255, 0.1);
       animation: preloader-breathe 1300ms ease-in-out infinite;
     }
 
@@ -128,6 +156,12 @@
       }
     }
 
+    @keyframes preloader-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     @keyframes preloader-load {
       0% {
         transform: translateX(-120%);
@@ -142,8 +176,10 @@
 <body>
   <div id="ink-paper-preloader" aria-label="Loading Ink & Paper">
     <div class="preloader-shell">
-      <div class="preloader-mark">
-        <img src="assets/assets/logo/ink_paper_mark.svg" alt="Ink & Paper">
+      <div class="preloader-icon-stage">
+        <div class="preloader-mark">
+          <img src="assets/assets/logo/ink_paper_mark.svg" alt="Ink & Paper">
+        </div>
       </div>
       <h1 class="preloader-title">INK &amp; PAPER</h1>
       <p class="preloader-message">Preparing your notes...</p>

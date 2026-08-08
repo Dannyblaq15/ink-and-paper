@@ -220,7 +220,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
               SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(24, isCompact ? 10 : 16, 24, 8),
+                  padding: EdgeInsets.fromLTRB(
+                    isCompact ? 12 : 16,
+                    isCompact ? 10 : 16,
+                    isCompact ? 12 : 16,
+                    8,
+                  ),
                   child: isCompact
                       ? Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
